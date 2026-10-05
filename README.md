@@ -1,0 +1,93 @@
+# STAR Test Summary Filler
+
+Fills Skate Canada STAR assessment summary sheets from a season tracking spreadsheet, so a whole
+season of test administration is one command instead of an evening of retyping.
+
+Built to run the administrative side of a real Skate Canada club's STAR testing.
+
+## The problem
+
+Every test a skater passes has to be recorded on an official summary sheet, submitted, and billed
+at a fixed rate. Done by hand across a season that means retyping skater names, Skate Canada
+numbers, test codes, dates and evaluator details hundreds of times — and the payment ledger and
+the submitted forms drift apart as soon as anyone is busy.
+
+This reads the ledger that already exists and produces the forms from it, so the two cannot
+disagree.
+
+## What it does
+
+1. Reads the season CSV exported from the club's tracking spreadsheet.
+2. Selects the tests that are **paid** and **have no summary number yet** — precisely the ones
+   that still need a sheet.
+3. Sorts by skater and groups into **batches of 10**, the number of tests one sheet holds.
+4. Writes each skater's details into the fields of the official fillable PDF.
+5. Sets each test to **$12.00** and totals the sheet.
+
+Output looks like `Spring_2026_Summary_1.pdf`, `Spring_2026_Summary_2.pdf`, …
+
+## Fields written per sheet
+
+For each of the 10 test slots:
+
+| Field | Source |
+|---|---|
+| `SkaterName{n}` | First name from `Patineur`, surname from `Patineur Nom de Famille` |
+| `SkaterSkateCanadaNumber{n}` | `# Skate Canada` |
+| `TestCode{n}` | `Test Réussi` |
+| `TestDate{n}` | `Date (Apparaît comme JJ/MM/AAAA)` |
+| `EvaluatorName{n}` | `Evaluateur/trice` |
+| `EvaluatorSkateCanadaNumber{n}` | `# Skate Canada Eval` |
+| `TestPassedCheck{n}` / `TestFailedCheck{n}` / `TestPassedWHonoursCheck{n}` | derived from `Note de Passage` (Réussite / Reprise / … avec Honneurs) |
+| `TestAmount{n}` | constant `12.00` |
+| `TotalAmountDue` | `12.00 × tests in batch` |
+
+The skater name is assembled by taking `Patineur` (which holds the first name plus trailing
+initials) and stripping the initials, then appending the separate surname column.
+
+## Input format
+
+The columns it reads, and nothing else:
+
+`Patineur` · `Patineur Nom  de Famille` · `Test Réussi` · `Note de Passage` ·
+`Date (Apparaît comme JJ/MM/AAAA)` · `Evaluateur/trice` · `# Skate Canada` ·
+`# Skate Canada Eval` · `Statut de Paiement` · `# Sommaire de Test`
+
+## Usage
+
+```bash
+pip install pymupdf
+cd "Summary System"
+python fill_summaries.py
+```
+
+The four constants at the bottom of the script set the CSV path, the form path, the output
+directory and the output filename prefix — edit those rather than moving files around.
+
+## Verified
+
+Run end-to-end before publishing: **12 eligible tests in → 2 sheets out** (10 + 2), with **127 and
+51 form fields written** and totals of **$120.00** and **$24.00**. A synthetic 12-row CSV in the
+same 19-column shape is in [`sample/sample_tests.csv`](sample/sample_tests.csv); every row is paid
+with no summary number, so all of them are selected.
+
+## What is not in this repository, and why
+
+- **The official fillable form.** It is Skate Canada's document, and the copy this was developed
+  against was not a blank template — it carried the club name, organisation number, Skate Canada
+  number, and the coordinator's name and mobile number. Supply your own copy of the form, and
+  make sure you fill in *your* coordinator block.
+- **The season CSV and the generated summaries.** The real ledger holds 450 rows of skater names,
+  Skate Canada numbers, evaluator names and payment status, and the generated PDFs repeat those
+  names. Neither belongs in a public repository. The `.gitignore` here ignores `*.csv` (except the
+  sample), `*.pdf` and `Generated_Summaries/` so the mistake is harder to repeat.
+
+## One caution
+
+The script writes the skater and test fields and the sheet total. **Organisation and coordinator
+fields are left exactly as they are in whichever form you start from** — so if you reuse a
+previously filled form as your template, whoever's details were on it go out on every sheet.
+
+## Licence
+
+MIT — see [LICENSE](LICENSE).

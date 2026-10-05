@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Real club data, generated output and the official form are never committed.
+# Generated summaries contain skater names and Skate Canada numbers.
+data/
+Generated_Summaries/
+*.pdf
+*.csv
+!sample/sample_tests.csv
