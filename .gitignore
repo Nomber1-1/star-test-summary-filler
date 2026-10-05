@@ -9,4 +9,5 @@ data/
 Generated_Summaries/
 *.pdf
 *.csv
+!sample/sample_template.pdf
 !sample/sample_tests.csv
