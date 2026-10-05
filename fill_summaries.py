@@ -1,5 +1,12 @@
 import csv
 import os
+
+# Skate Canada STAR test fee, in dollars. Raised from 12.00 to 15.00 effective
+# 2026-08-01. Single constant on purpose: it is used both for each test line and
+# for the sheet total, and a partial edit would make the lines disagree with the
+# total. Set it to 12.00 for a batch of tests taken before 2026-08-01.
+TEST_FEE = 15.00
+
 try:
     import fitz  # PyMuPDF
 except ImportError:
@@ -79,11 +86,11 @@ def process_test_summaries(csv_file_path, template_path, output_dir):
                 f"TestPassedCheck{idx}": True if is_reussite else False,
                 f"TestFailedCheck{idx}": True if is_reprise else False,
                 f"TestPassedWHonoursCheck{idx}": True if is_honneurs else False,
-                f"TestAmount{idx}": "12.00"
+                f"TestAmount{idx}": f"{TEST_FEE:.2f}"
             })
             
         # Calculate total for the sheet
-        data_dict["TotalAmountDue"] = f"{len(batch) * 12}.00"
+        data_dict["TotalAmountDue"] = f"{len(batch) * TEST_FEE:.2f}"
         
         # Open PDF template for the batch
         doc = fitz.open(template_path)

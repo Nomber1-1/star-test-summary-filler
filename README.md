@@ -22,9 +22,20 @@ disagree.
    that still need a sheet.
 3. Sorts by skater and groups into **batches of 10**, the number of tests one sheet holds.
 4. Writes each skater's details into the fields of the official fillable PDF.
-5. Sets each test to **$12.00** and totals the sheet.
+5. Sets each test to **$15.00** — the current Skate Canada STAR fee — and totals the sheet.
 
 Output looks like `Spring_2026_Summary_1.pdf`, `Spring_2026_Summary_2.pdf`, …
+
+## Test fee
+
+Skate Canada's STAR test fee is **$15.00 per test** as of **2026-08-01**; it was $12.00 before
+that. The fee lives in a single `TEST_FEE` constant at the top of the script because it is used
+twice — once per test line and once for the sheet total — and a partial edit would leave the lines
+disagreeing with the total.
+
+If you are clearing a backlog that includes tests taken before 2026-08-01, set `TEST_FEE = 12.00`
+for that batch: the fee is applied uniformly to every test on a sheet, and the script does not
+currently price by test date.
 
 ## Fields written per sheet
 
@@ -39,8 +50,8 @@ For each of the 10 test slots:
 | `EvaluatorName{n}` | `Evaluateur/trice` |
 | `EvaluatorSkateCanadaNumber{n}` | `# Skate Canada Eval` |
 | `TestPassedCheck{n}` / `TestFailedCheck{n}` / `TestPassedWHonoursCheck{n}` | derived from `Note de Passage` (Réussite / Reprise / … avec Honneurs) |
-| `TestAmount{n}` | constant `12.00` |
-| `TotalAmountDue` | `12.00 × tests in batch` |
+| `TestAmount{n}` | the `TEST_FEE` constant, currently **15.00** |
+| `TotalAmountDue` | `TEST_FEE × tests in batch` |
 
 The skater name is assembled by taking `Patineur` (which holds the first name plus trailing
 initials) and stripping the initials, then appending the separate surname column.
@@ -72,7 +83,7 @@ immediately with no club data at all. Point `csv_path` at `sample/sample_tests.c
 Run end-to-end before publishing, twice.
 
 Against the **synthetic template** shipped here (106 form fields): 12 eligible tests in → 2 sheets
-out (10 + 2), **101 and 45 fields written**, totals of **$120.00** and **$24.00**, with names,
+out (10 + 2), **101 and 45 fields written**, totals of **$150.00** and **$30.00**, with names,
 Skate Canada numbers, test codes and dates landing in the right slots.
 
 Against the real official form: the same batching and totals, with 127 and 51 fields written —
