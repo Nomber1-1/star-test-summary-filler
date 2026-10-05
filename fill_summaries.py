@@ -4,7 +4,8 @@ import os
 # Skate Canada STAR test fee, in dollars. Raised from 12.00 to 15.00 effective
 # 2026-08-01. Single constant on purpose: it is used both for each test line and
 # for the sheet total, and a partial edit would make the lines disagree with the
-# total. Set it to 12.00 for a batch of tests taken before 2026-08-01.
+# total. The 15.00 rate applies to every test billed from 2026-08-01 onward,
+# including tests passed earlier, so there is no per-test-date pricing here.
 TEST_FEE = 15.00
 
 try:

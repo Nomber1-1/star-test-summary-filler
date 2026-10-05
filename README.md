@@ -33,9 +33,9 @@ that. The fee lives in a single `TEST_FEE` constant at the top of the script bec
 twice — once per test line and once for the sheet total — and a partial edit would leave the lines
 disagreeing with the total.
 
-If you are clearing a backlog that includes tests taken before 2026-08-01, set `TEST_FEE = 12.00`
-for that batch: the fee is applied uniformly to every test on a sheet, and the script does not
-currently price by test date.
+The new rate applies to **every test billed from 2026-08-01 onward, including tests passed
+earlier** — the tool does not price by test date, so a batch assembled today is billed at $15.00
+whatever date the tests were skated. There is no backlog exception to make.
 
 ## Fields written per sheet
 
